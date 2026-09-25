@@ -330,3 +330,253 @@ The project now contains three connected layers:
 **Data Science Evaluation → Business Decision Logic → Interactive Application**
 
 The core algorithm and operating point are now considered frozen. Further work should focus on **Phase 3: portfolio presentation, dashboard polish, documentation, architecture visualization, screenshots, and GitHub cleanup**, rather than adding new models or expanding the system scope.
+
+---
+
+# Supplementary Progress Report — Deployment, Stress Testing & Project Freeze
+
+**Date:** 26 September 2026  
+**Status:** COMPLETED / FROZEN  
+**Project:** Two-Stage Visual Verification for Reducing False Alarms  
+
+## 1. Overview
+
+Following completion of the benchmark evaluation and operating-point optimization, the project was extended through public deployment, industrial stress testing, failure-mode analysis, repeatability testing, and final portfolio packaging.
+
+The project is now considered technically frozen. No further model, architecture, threshold, or feature changes are planned unless future evidence identifies a substantive issue.
+
+The final system uses:
+* **Stage 1:** OWL-ViT open-vocabulary object detection
+* **Stage 2:** CLIP image-text verification
+* **Decision logic:** AND
+* **Frozen Stage 1 threshold:** $V_1 \ge 0.05$
+* **Frozen Stage 2 threshold:** $V_2 \ge 0.20$
+* **ROI context padding:** 10%
+* **Candidate selection:** Top-1
+* **Deployment:** Gradio application on Hugging Face Spaces
+
+---
+
+## 2. Public Deployment
+
+The application was successfully deployed to a public Hugging Face Space:
+
+* **Hugging Face Space:** [https://huggingface.co/spaces/Bright87/Two_Stage_Visual_Verification](https://huggingface.co/spaces/Bright87/Two_Stage_Visual_Verification)
+* **Direct application:** [https://bright87-two-stage-visual-verification.hf.space](https://bright87-two-stage-visual-verification.hf.space/)
+
+The deployed application successfully loaded the same two-stage verification workflow used during local testing.
+
+This establishes that the project is not limited to a local prototype and can be packaged as a deployable interactive ML application.
+
+---
+
+## 3. Ten-Scenario Industrial Stress Test
+
+A new set of 10 photorealistic industrial scenarios was created to test visual diversity beyond the original worker/helmet examples.
+
+The test set covered:
+
+**Safety / Industrial**
+1. Forklift in warehouse
+2. Forklift operator / safety boots close-up
+3. Overhead crane lifting a steel component
+4. Distant worker in a large manufacturing bay
+5. Safety boots in a factory environment
+6. Worker without a hardhat
+
+**Manufacturing Quality**
+7. Machined component with metal scrap attached
+8. Batch inspection with one defective part among multiple normal parts
+9. Macro view of burr/scrap on a machined component
+10. Production tray containing multiple machined parts with one scrap-contaminated part
+
+The purpose was not to establish industrial production accuracy, but to examine whether the architecture behaves sensibly across different industrial visual contexts.
+
+---
+
+## 4. Stress-Test Results
+
+| # | Scenario | $V_1$ | $V_2$ | Decision |
+| :-: | :--- | :---: | :---: | :--- |
+| 1 | Forklift warehouse | 0.5799 | 0.3003 | Alert Confirmed |
+| 2 | Safety boots close-up | 0.2511 | 0.3255 | Alert Confirmed |
+| 3 | Overhead crane | 0.2753 | 0.3344 | Alert Confirmed |
+| 4 | Distant worker | 0.0310 | 0.2453 | Not Confirmed |
+| 5 | Safety boots low-angle | 0.2890 | 0.3141 | Alert Confirmed |
+| 6 | Worker without hardhat | 0.0647 | 0.3264 | Alert Confirmed |
+| 7 | Machined part with scrap | 0.1026 | 0.2111 | Alert Confirmed |
+| 8 | Batch inspection / one defect | 0.1153 | 0.2216 | Alert Confirmed |
+| 9 | Macro burr / scrap | 0.1389 | 0.2840 | Alert Confirmed |
+| 10 | Production tray clutter | 0.0399 | 0.2491 | Not Confirmed |
+
+The test demonstrated successful verification across multiple industrial concepts while also exposing meaningful failure modes.
+
+---
+
+## 5. Observed Failure Modes
+
+### 5.1 Small / Distant Objects
+Scenario #4 contained a worker at substantial distance from the camera.
+
+The detected ROI was approximately:
+$$22 \times 43 \text{ px}$$
+
+Stage 1 produced:
+$$V_1 = 0.0310 < 0.05$$
+while Stage 2 produced:
+$$V_2 = 0.2453 > 0.20$$
+
+The final result was therefore:
+**Not Confirmed (Filtered)**
+
+This provides empirical evidence that very small or distant targets can reduce Stage 1 detection confidence.
+
+The project does not claim a specific pixel cutoff or attribute the failure to a single architectural mechanism.
+
+**Recommended documentation wording:**
+> *Small or distant objects can reduce Stage 1 detection confidence, increasing the risk of missed alerts.*
+
+---
+
+## 6. Sequential Gate Bottleneck
+Scenario #10 demonstrated an important architectural property.
+
+Results:
+* $V_1 = 0.0399 \rightarrow$ **FAIL**
+* $V_2 = 0.2491 \rightarrow$ **PASS**
+* Final decision $\rightarrow$ **Not Confirmed**
+
+Because the system is sequential, Stage 2 cannot rescue an alert when Stage 1 fails to produce a candidate above the initial detection threshold.
+
+This is documented as a structural limitation of the two-stage architecture rather than as a model bug.
+
+**Recommended wording:**
+> *Stage 2 cannot rescue an alert when Stage 1 fails to propose a candidate passing the initial threshold. Defects that fail the localization gate are therefore filtered regardless of their Stage 2 semantic alignment.*
+
+---
+
+## 7. Manufacturing Quality Stress Testing
+The additional quality scenarios expanded the project beyond safety monitoring.
+
+The system successfully verified:
+* individual machined components containing scrap
+* a batch containing one abnormal component
+* burr/scrap defects in a close-up inspection view
+
+However, the cluttered production-tray scenario produced a Stage 1 failure despite Stage 2 alignment.
+
+This demonstrates that the architecture can support manufacturing-quality applications while also showing that production-like visual complexity can create detection failures.
+
+These scenarios are demonstrations of architecture reuse, not validated industrial inspection performance.
+
+---
+
+## 8. Prompt Sensitivity
+Previous testing demonstrated that semantically similar prompts can produce materially different scores.
+
+Examples included successful prompts such as:
+`a photo of a worker without a hardhat`
+and lower-performing variants such as:
+`person not wearing helmet`
+
+This behavior is documented as both:
+
+* **Prompting Guideline:** Use descriptive, image-grounded prompts and maintain canonical prompts for reproducible evaluation.
+* **Known Limitation:** Because OWL-ViT relies on image-text similarity, semantically equivalent prompts can produce different detection scores and therefore different final decisions.
+
+Threshold optimization was not repeated based on these observations. The canonical operating point remains frozen.
+
+---
+
+## 9. Repeatability and Determinism
+A repeated local inference test was conducted using the same image and prompt three times.
+
+**Input:**
+* Image: `safety_violation_no_helmet.jpg`
+* Prompt: `a photo of a worker without a hardhat`
+
+**Results:**
+
+| Run | $V_1$ | $V_2$ | Decision |
+| :-: | :---: | :---: | :--- |
+| 1 | 0.117256 | 0.275284 | Alert Confirmed |
+| 2 | 0.117256 | 0.275284 | Alert Confirmed |
+| 3 | 0.117256 | 0.275284 | Alert Confirmed |
+
+The local inference results were identical across all three runs.
+The public GPU deployment produced numerically close scores with the same final decision.
+
+Therefore, the defensible conclusion is:
+> *Local inference was deterministic across repeated runs, while public GPU inference produced numerically close scores with identical final decisions.*
+
+The project does not claim bit-exact equivalence across different hardware environments.
+
+---
+
+## 10. Final Benchmark Evidence
+The previously frozen benchmark remains unchanged.
+
+**Frozen test set:**
+2,000 samples
+
+**Results for the selected operating point:**
+* Recall: **90.75%**
+* Precision: **72.24%**
+* False Alarm Reduction: **76.75%**
+* Recall Retention: **90.75%**
+* Cases filtered before human-review stage: **995 / 2,000**
+* Review workload avoided: **49.8%** of benchmark cases
+
+The benchmark is COCO-based and uses synthetic/hard-negative construction. These figures therefore describe benchmark performance, not validated production performance.
+
+---
+
+## 11. Project Freeze
+The following components are now frozen:
+
+* **Model:** OWL-ViT + CLIP
+* **Architecture:** Sequential two-stage verification, Top-1 candidate selection, 10% context-padded ROI
+* **Decision Rule:** $V_1 \ge 0.05 \land V_2 \ge 0.20$ (AND Gate)
+* **Application:** Gradio dashboard (Safety Monitoring, Quality & Assembly Inspection, Human-review simulation)
+* **Evidence:** Frozen benchmark, 10-scenario stress test, failure-mode documentation, deployment test, repeatability test
+
+No further optimization is planned for the current portfolio version.
+
+---
+
+## 12. Portfolio Positioning
+The project is positioned as an **Applied Data Science / Computer Vision decision-support system**, rather than a novel computer-vision research contribution.
+
+The main strengths demonstrated are:
+1. Translating a business problem into a measurable ML workflow
+2. Designing a two-stage verification architecture
+3. Selecting an operating point using a recall constraint
+4. Evaluating false-alarm reduction and recall trade-offs
+5. Performing explicit failure-mode analysis
+6. Building a reusable inference engine
+7. Deploying the system publicly
+8. Documenting limitations instead of presenting benchmark results as production validation
+
+The project complements the user's manufacturing background by demonstrating the ability to connect industrial workflows with modern AI/ML techniques.
+
+---
+
+## 13. Final Status
+
+**Project 2 — Two-Stage Visual Verification**  
+**Status: DONE / FROZEN**
+
+The project has now completed:
+* [x] Model implementation
+* [x] Benchmark evaluation
+* [x] Operating-point optimization
+* [x] Business application implementation
+* [x] Industrial stress testing
+* [x] Failure-mode analysis
+* [x] Public deployment
+* [x] Repeatability testing
+* [x] README documentation
+* [x] Portfolio packaging
+
+Further work should focus on portfolio integration and interview preparation, rather than additional model experimentation.
+
