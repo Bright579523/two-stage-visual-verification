@@ -1,0 +1,122 @@
+[
+  {
+    "file": "safety_01_forklift_warehouse.jpg",
+    "description": "Safety / Forklift detection in warehouse",
+    "prompt": "a photo of a forklift",
+    "v1_score": 0.5799,
+    "v1_pass": true,
+    "v2_score": 0.3003,
+    "v2_pass": true,
+    "decision": "Alert Confirmed",
+    "box_dimensions": "489x340px",
+    "latency_ms": 670.9
+  },
+  {
+    "file": "safety_02_forklift_boots_step.jpg",
+    "description": "Safety / Safety boots close-up on forklift step",
+    "prompt": "a photo of safety boots",
+    "v1_score": 0.2511,
+    "v1_pass": true,
+    "v2_score": 0.3255,
+    "v2_pass": true,
+    "decision": "Alert Confirmed",
+    "box_dimensions": "220x145px",
+    "latency_ms": 692.1
+  },
+  {
+    "file": "safety_03_overhead_crane.jpg",
+    "description": "Safety / Overhead crane lifting steel beam",
+    "prompt": "a photo of an overhead crane",
+    "v1_score": 0.2753,
+    "v1_pass": true,
+    "v2_score": 0.3344,
+    "v2_pass": true,
+    "decision": "Alert Confirmed",
+    "box_dimensions": "339x415px",
+    "latency_ms": 801.0
+  },
+  {
+    "file": "safety_04_crane_worker_distant.jpg",
+    "description": "Safety / Distant worker in factory bay (Resolution challenge)",
+    "prompt": "a photo of a factory worker",
+    "v1_score": 0.031,
+    "v1_pass": false,
+    "v2_score": 0.2453,
+    "v2_pass": true,
+    "decision": "Not Confirmed (Filtered)",
+    "box_dimensions": "22x43px",
+    "latency_ms": 768.7
+  },
+  {
+    "file": "safety_05_safety_boots_lowangle.jpg",
+    "description": "Safety / Low-angle safety boots on workshop floor",
+    "prompt": "a photo of safety boots",
+    "v1_score": 0.289,
+    "v1_pass": true,
+    "v2_score": 0.3141,
+    "v2_pass": true,
+    "decision": "Alert Confirmed",
+    "box_dimensions": "410x309px",
+    "latency_ms": 560.9
+  },
+  {
+    "file": "safety_06_ppe_missing_helmet.jpg",
+    "description": "Safety / PPE breach (Worker without hardhat)",
+    "prompt": "a photo of a worker without a hardhat",
+    "v1_score": 0.0647,
+    "v1_pass": true,
+    "v2_score": 0.3264,
+    "v2_pass": true,
+    "decision": "Alert Confirmed",
+    "box_dimensions": "230x667px",
+    "latency_ms": 667.6
+  },
+  {
+    "file": "quality_01_part_metal_scrap.jpg",
+    "description": "Quality / Single part with metal scrap burr",
+    "prompt": "a photo of scrap metal debris",
+    "v1_score": 0.1026,
+    "v1_pass": true,
+    "v2_score": 0.2111,
+    "v2_pass": true,
+    "decision": "Alert Confirmed",
+    "box_dimensions": "1020x717px",
+    "latency_ms": 775.7
+  },
+  {
+    "file": "quality_02_batch_scrap_defect.jpg",
+    "description": "Quality / Batch inspection (1 defect in 12 parts)",
+    "prompt": "a photo of scrap metal debris",
+    "v1_score": 0.1153,
+    "v1_pass": true,
+    "v2_score": 0.2216,
+    "v2_pass": true,
+    "decision": "Alert Confirmed",
+    "box_dimensions": "1330x761px",
+    "latency_ms": 599.4
+  },
+  {
+    "file": "quality_03_burr_scrap_macro.jpg",
+    "description": "Quality / Macro burr on threaded hole",
+    "prompt": "a photo of a metal burr defect",
+    "v1_score": 0.1389,
+    "v1_pass": true,
+    "v2_score": 0.284,
+    "v2_pass": true,
+    "decision": "Alert Confirmed",
+    "box_dimensions": "622x516px",
+    "latency_ms": 572.9
+  },
+  {
+    "file": "quality_04_tray_clutter_defect.jpg",
+    "description": "Quality / Production tray clutter defect",
+    "prompt": "a photo of scrap metal debris",
+    "v1_score": 0.0399,
+    "v1_pass": false,
+    "v2_score": 0.2491,
+    "v2_pass": true,
+    "decision": "Not Confirmed (Filtered)",
+    "box_dimensions": "463x219px",
+    "latency_ms": 631.4
+  }
+]

@@ -1,0 +1,14 @@
+# Environments & Python caches
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.env
+
+# Gradio cache
+.gradio/
+flagged/
+
+# OS files
+.DS_Store
+Thumbs.db

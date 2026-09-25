@@ -1,0 +1,4 @@
+Total Alerts,True Alerts (TP),False Alarms (FP),Missed Alerts (FN),Correct Rejections (TN),Precision,Recall,F1-Score,FPR,FNR,FA Reduction (%),Recall Retention (%),Reviews Avoided,Configuration
+2000,800,1200,0,0,0.4,1.0,0.5714,1.0,0.0,0.0,100.0,0,A. Stage 1 (Raw Baseline)
+636,563,73,237,1127,0.8852,0.7037,0.7841,0.0608,0.2962,93.92,70.38,1364,"Ref: Phase 1 Strict AND (t1=0.09, t2=0.25)"
+1005,726,279,74,921,0.7224,0.9075,0.8044,0.2325,0.0925,76.75,90.75,995,"Recommended: AND Logic (t1=0.05, t2=0.2)"

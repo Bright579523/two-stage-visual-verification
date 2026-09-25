@@ -1,0 +1,277 @@
+{
+  "normal_cases": [
+    {
+      "scenario": "Scenario 1 (Alert): Worker without hardhat",
+      "prompt": "a photo of a worker without a hardhat",
+      "v1_score": 0.1173,
+      "v1_pass": true,
+      "v2_score": 0.2753,
+      "v2_pass": true,
+      "decision": "Alert Confirmed",
+      "expected": "Alert Confirmed",
+      "match": true
+    },
+    {
+      "scenario": "Scenario 2 (Compliant): Worker with hardhat",
+      "prompt": "a photo of a worker without a hardhat",
+      "v1_score": 0.1117,
+      "v1_pass": true,
+      "v2_score": 0.1932,
+      "v2_pass": false,
+      "decision": "Not Confirmed (Filtered)",
+      "expected": "Not Confirmed (Filtered)",
+      "match": true
+    },
+    {
+      "scenario": "Scenario 1 (Defect): Empty bolt hole",
+      "prompt": "a photo of an empty bolt hole",
+      "v1_score": 0.0734,
+      "v1_pass": true,
+      "v2_score": 0.2961,
+      "v2_pass": true,
+      "decision": "Alert Confirmed",
+      "expected": "Alert Confirmed",
+      "match": true
+    },
+    {
+      "scenario": "Scenario 2 (Compliant): Fully assembled unit",
+      "prompt": "a photo of an empty bolt hole",
+      "v1_score": 0.0309,
+      "v1_pass": false,
+      "v2_score": 0.2712,
+      "v2_pass": true,
+      "decision": "Not Confirmed (Filtered)",
+      "expected": "Not Confirmed (Filtered)",
+      "match": true
+    }
+  ],
+  "prompt_robustness": [
+    {
+      "domain": "Safety Violation",
+      "prompt": "a photo of a worker without a hardhat",
+      "v1_score": 0.1173,
+      "v1_pass": true,
+      "v2_score": 0.2753,
+      "v2_pass": true,
+      "decision": "Alert Confirmed"
+    },
+    {
+      "domain": "Safety Violation",
+      "prompt": "a photo of a person without a safety helmet",
+      "v1_score": 0.3717,
+      "v1_pass": true,
+      "v2_score": 0.2992,
+      "v2_pass": true,
+      "decision": "Alert Confirmed"
+    },
+    {
+      "domain": "Safety Violation",
+      "prompt": "a worker not wearing protective headgear",
+      "v1_score": 0.0932,
+      "v1_pass": true,
+      "v2_score": 0.2747,
+      "v2_pass": true,
+      "decision": "Alert Confirmed"
+    },
+    {
+      "domain": "Safety Violation",
+      "prompt": "worker without hardhat",
+      "v1_score": 0.1096,
+      "v1_pass": true,
+      "v2_score": 0.2906,
+      "v2_pass": true,
+      "decision": "Alert Confirmed"
+    },
+    {
+      "domain": "Safety Violation",
+      "prompt": "person not wearing helmet",
+      "v1_score": 0.0188,
+      "v1_pass": false,
+      "v2_score": 0.2268,
+      "v2_pass": true,
+      "decision": "Not Confirmed (Filtered)"
+    },
+    {
+      "domain": "Quality Defect",
+      "prompt": "a photo of an empty bolt hole",
+      "v1_score": 0.0734,
+      "v1_pass": true,
+      "v2_score": 0.2961,
+      "v2_pass": true,
+      "decision": "Alert Confirmed"
+    },
+    {
+      "domain": "Quality Defect",
+      "prompt": "a photo of a missing bolt",
+      "v1_score": 0.0763,
+      "v1_pass": true,
+      "v2_score": 0.3057,
+      "v2_pass": true,
+      "decision": "Alert Confirmed"
+    },
+    {
+      "domain": "Quality Defect",
+      "prompt": "empty bolt hole",
+      "v1_score": 0.0114,
+      "v1_pass": false,
+      "v2_score": 0.2741,
+      "v2_pass": true,
+      "decision": "Not Confirmed (Filtered)"
+    },
+    {
+      "domain": "Quality Defect",
+      "prompt": "missing bolt fastener",
+      "v1_score": 0.0193,
+      "v1_pass": false,
+      "v2_score": 0.3033,
+      "v2_pass": true,
+      "decision": "Not Confirmed (Filtered)"
+    }
+  ],
+  "custom_images": [
+    {
+      "test_name": "Multiple Distant Workers (Crowd/Distance)",
+      "prompt": "a photo of a worker without a hardhat",
+      "v1_score": 0.0324,
+      "v1_pass": false,
+      "v2_score": 0.2412,
+      "v2_pass": true,
+      "decision": "Not Confirmed (Filtered)",
+      "box": [
+        672,
+        634,
+        727,
+        740
+      ],
+      "roi_dim": "55x106px",
+      "resolution_warning": true
+    },
+    {
+      "test_name": "Dark Grainy Night CCTV",
+      "prompt": "a photo of a worker without a hardhat",
+      "v1_score": 0.0238,
+      "v1_pass": false,
+      "v2_score": 0.2537,
+      "v2_pass": true,
+      "decision": "Not Confirmed (Filtered)",
+      "box": [
+        663,
+        505,
+        746,
+        682
+      ],
+      "roi_dim": "83x177px",
+      "resolution_warning": true
+    },
+    {
+      "test_name": "Irrelevant Object: Dog",
+      "prompt": "a photo of a worker without a hardhat",
+      "v1_score": 0.0016,
+      "v1_pass": false,
+      "v2_score": 0.1995,
+      "v2_pass": false,
+      "decision": "Not Confirmed (Filtered)",
+      "box": [
+        524,
+        247,
+        775,
+        463
+      ],
+      "roi_dim": "251x216px",
+      "resolution_warning": false
+    },
+    {
+      "test_name": "Empty Room (No Workers/Hazards)",
+      "prompt": "a photo of a worker without a hardhat",
+      "v1_score": 0.0035,
+      "v1_pass": false,
+      "v2_score": 0.183,
+      "v2_pass": false,
+      "decision": "Not Confirmed (Filtered)",
+      "box": [
+        0,
+        0,
+        1020,
+        1018
+      ],
+      "roi_dim": "1020x1018px",
+      "resolution_warning": false
+    }
+  ],
+  "false_positive_cases": [
+    {
+      "case": "Hard Negative: Compliant Worker (wearing hardhat) queried for breach",
+      "prompt": "a photo of a worker without a hardhat",
+      "v1_score": 0.1117,
+      "v1_pass": true,
+      "v2_score": 0.1932,
+      "v2_pass": false,
+      "decision": "Not Confirmed (Filtered)",
+      "suppressed": true,
+      "mechanism": "Filtered by V2 (CLIP)"
+    },
+    {
+      "case": "Hard Negative: Compliant Assembly (all bolts fastened) queried for empty hole",
+      "prompt": "a photo of an empty bolt hole",
+      "v1_score": 0.0309,
+      "v1_pass": false,
+      "v2_score": 0.2712,
+      "v2_pass": true,
+      "decision": "Not Confirmed (Filtered)",
+      "suppressed": true,
+      "mechanism": "Filtered by V1 (OWL-ViT)"
+    },
+    {
+      "case": "Semantic Mismatch: Dog photo queried for worker without hardhat",
+      "prompt": "a photo of a worker without a hardhat",
+      "v1_score": 0.0016,
+      "v1_pass": false,
+      "v2_score": 0.1995,
+      "v2_pass": false,
+      "decision": "Not Confirmed (Filtered)",
+      "suppressed": true,
+      "mechanism": "Filtered by V1 (OWL-ViT)"
+    }
+  ],
+  "technical_edge_cases": [
+    {
+      "case": "Huge Image (3200x2400)",
+      "status": "Success",
+      "decision": "Alert Confirmed"
+    },
+    {
+      "case": "Tiny Image (40x40)",
+      "status": "Success",
+      "decision": "Not Confirmed (Filtered)",
+      "res_warning": true
+    },
+    {
+      "case": "Grayscale (Mode L)",
+      "status": "Success",
+      "decision": "Alert Confirmed"
+    },
+    {
+      "case": "RGBA PNG",
+      "status": "Success",
+      "decision": "Alert Confirmed"
+    },
+    {
+      "case": "Extreme Aspect Ratio (2000x100)",
+      "status": "Success",
+      "decision": "Not Confirmed (Filtered)"
+    },
+    {
+      "case": "Empty Prompt",
+      "status": "Gracefully Caught (ValueError)",
+      "message": "Target query prompt is required."
+    }
+  ],
+  "performance_metrics": {
+    "model_load_time_sec": 7.83,
+    "first_inference_latency_ms": 1009.5,
+    "avg_warm_inference_latency_ms": 752.7,
+    "v1_latency_ms": 801.6,
+    "v2_latency_ms": 173.5,
+    "peak_memory_mb": 25.44
+  }
+}
