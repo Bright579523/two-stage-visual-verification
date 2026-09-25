@@ -149,8 +149,8 @@ The application is deployed on Hugging Face Spaces and supports dynamic executio
 | **Cold Model Loading** | **7.83 s** | Combined OWL-ViT and CLIP initialization |
 | **First Inference (Cold)** | **1,009.5 ms** | Includes tensor allocation and model warmup |
 | **Average Warm Inference (CPU)** | **752.7 ms** | Stage 1: ~580 ms, Stage 2: ~170 ms |
-| **Average Warm Inference (GPU)** | **< 100 ms** | ZeroGPU Nvidia A10G acceleration |
 | **Incremental Memory Delta** | **25.4 MB** | Working set ~550 MB, zero memory leaks |
+| **Repeatability Behavior** | **Deterministic** | Local inference was deterministic across repeated runs; public GPU inference produced numerically close scores with identical final decisions |
 
 ---
 
