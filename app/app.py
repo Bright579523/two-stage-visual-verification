@@ -39,7 +39,7 @@ QUALITY_SAMPLE_ALERT = os.path.join(SAMPLES_DIR, "quality_defect_missing_bolt.jp
 QUALITY_SAMPLE_COMPLIANT = os.path.join(SAMPLES_DIR, "quality_compliant_assembly.jpg")
 
 # ---------------------------------------------------------------------------
-# Custom CSS for clean, professional executive styling
+# Custom CSS for clean, professional executive styling (Dark & Light Mode)
 # ---------------------------------------------------------------------------
 CUSTOM_CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -50,6 +50,99 @@ body, .gradio-container {
     margin: auto !important;
 }
 
+/* Light Mode Defaults */
+:root {
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --card-title: #475569;
+    --card-desc: #64748b;
+    --card-val: #0f172a;
+    --fn-bg: #f8fafc;
+    --fn-border: #e2e8f0;
+    --fn-accent: #0284c7;
+    --fn-text: #334155;
+    --fn-strong: #0f172a;
+    --sc-bg: #ffffff;
+    --sc-border: #e2e8f0;
+    --sc-header: #0f172a;
+    --sc-label: #1e293b;
+    --sc-sub: #64748b;
+    --sc-val: #0f172a;
+    --sc-meta: #475569;
+    --sc-divider: #e2e8f0;
+    --dec-alert-bg: #fef2f2;
+    --dec-alert-border: #ef4444;
+    --dec-alert-title: #b91c1c;
+    --dec-alert-desc: #334155;
+    --dec-filt-bg: #f0fdf4;
+    --dec-filt-border: #22c55e;
+    --dec-filt-title: #15803d;
+    --dec-filt-desc: #334155;
+}
+
+/* Dark Mode Overrides via OS preference */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --card-bg: #1e293b;
+        --card-border: #334155;
+        --card-title: #94a3b8;
+        --card-desc: #94a3b8;
+        --card-val: #f8fafc;
+        --fn-bg: #0f172a;
+        --fn-border: #1e293b;
+        --fn-accent: #38bdf8;
+        --fn-text: #cbd5e1;
+        --fn-strong: #f8fafc;
+        --sc-bg: #1e293b;
+        --sc-border: #334155;
+        --sc-header: #f8fafc;
+        --sc-label: #e2e8f0;
+        --sc-sub: #94a3b8;
+        --sc-val: #f8fafc;
+        --sc-meta: #94a3b8;
+        --sc-divider: #334155;
+        --dec-alert-bg: rgba(239, 68, 68, 0.18);
+        --dec-alert-border: #ef4444;
+        --dec-alert-title: #f87171;
+        --dec-alert-desc: #fca5a5;
+        --dec-filt-bg: rgba(34, 197, 94, 0.18);
+        --dec-filt-border: #22c55e;
+        --dec-filt-title: #4ade80;
+        --dec-filt-desc: #86efac;
+    }
+}
+
+/* Dark Mode Overrides via Gradio theme class */
+.dark, body.dark, .gradio-container.dark {
+    --card-bg: #1e293b;
+    --card-border: #334155;
+    --card-title: #94a3b8;
+    --card-desc: #94a3b8;
+    --card-val: #f8fafc;
+    --fn-bg: #0f172a;
+    --fn-border: #1e293b;
+    --fn-accent: #38bdf8;
+    --fn-text: #cbd5e1;
+    --fn-strong: #f8fafc;
+    --sc-bg: #1e293b;
+    --sc-border: #334155;
+    --sc-header: #f8fafc;
+    --sc-label: #e2e8f0;
+    --sc-sub: #94a3b8;
+    --sc-val: #f8fafc;
+    --sc-meta: #94a3b8;
+    --sc-divider: #334155;
+    --dec-alert-bg: rgba(239, 68, 68, 0.18);
+    --dec-alert-border: #ef4444;
+    --dec-alert-title: #f87171;
+    --dec-alert-desc: #fca5a5;
+    --dec-filt-bg: rgba(34, 197, 94, 0.18);
+    --dec-filt-border: #22c55e;
+    --dec-filt-title: #4ade80;
+    --dec-filt-desc: #86efac;
+}
+
+/* Layout & Elements */
 .kpi-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -58,17 +151,18 @@ body, .gradio-container {
 }
 
 .kpi-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
     border-radius: 8px;
     padding: 14px 16px;
     text-align: left;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .kpi-title {
     font-size: 0.80rem;
-    font-weight: 600;
-    color: #64748b;
+    font-weight: 700;
+    color: var(--card-title) !important;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 4px;
@@ -77,33 +171,48 @@ body, .gradio-container {
 .kpi-value {
     font-size: 1.55rem;
     font-weight: 700;
-    color: #0f172a;
     line-height: 1.2;
 }
 
 .kpi-desc {
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--card-desc) !important;
     margin-top: 4px;
+    line-height: 1.3;
 }
 
 .benchmark-footnote {
     font-size: 0.78rem;
-    color: #64748b;
-    background: #f1f5f9;
-    border-left: 3px solid #0284c7;
-    padding: 8px 12px;
-    border-radius: 4px;
+    color: var(--fn-text) !important;
+    background: var(--fn-bg) !important;
+    border: 1px solid var(--fn-border) !important;
+    border-left: 4px solid var(--fn-accent) !important;
+    padding: 10px 14px;
+    border-radius: 6px;
     margin-bottom: 20px;
-    line-height: 1.4;
+    line-height: 1.45;
+}
+
+.benchmark-footnote strong {
+    color: var(--fn-strong) !important;
 }
 
 .score-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: var(--sc-bg) !important;
+    border: 1px solid var(--sc-border) !important;
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.score-header {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--sc-header) !important;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--sc-divider);
+    padding-bottom: 6px;
 }
 
 .score-row {
@@ -111,6 +220,42 @@ body, .gradio-container {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
+}
+
+.score-label {
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--sc-label) !important;
+}
+
+.score-sub {
+    font-size: 0.74rem;
+    color: var(--sc-sub) !important;
+}
+
+.score-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--sc-val) !important;
+}
+
+.score-footer {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--sc-divider);
+    font-size: 0.76rem;
+    color: var(--sc-meta) !important;
+    display: flex;
+    justify-content: space-between;
+}
+
+.score-meta {
+    font-size: 0.74rem;
+    color: var(--sc-sub) !important;
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .gate-pill {
@@ -123,38 +268,74 @@ body, .gradio-container {
 }
 
 .gate-pass {
-    background: #dcfce7;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
+    background: #dcfce7 !important;
+    color: #15803d !important;
+    border: 1px solid #bbf7d0 !important;
+}
+
+.dark .gate-pass, body.dark .gate-pass, .gradio-container.dark .gate-pass {
+    background: rgba(34, 197, 94, 0.2) !important;
+    color: #4ade80 !important;
+    border: 1px solid #22c55e !important;
 }
 
 .gate-fail {
-    background: #fee2e2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
+    background: #fee2e2 !important;
+    color: #b91c1c !important;
+    border: 1px solid #fecaca !important;
+}
+
+.dark .gate-fail, body.dark .gate-fail, .gradio-container.dark .gate-fail {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #f87171 !important;
+    border: 1px solid #ef4444 !important;
 }
 
 .decision-alert {
-    background: #fef2f2;
-    border: 1.5px solid #ef4444;
+    background: var(--dec-alert-bg) !important;
+    border: 1.5px solid var(--dec-alert-border) !important;
     border-radius: 8px;
     padding: 16px;
     text-align: center;
     margin-bottom: 14px;
+}
+
+.decision-alert .decision-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--dec-alert-title) !important;
+    margin: 4px 0;
+}
+
+.decision-alert .decision-desc {
+    font-size: 0.82rem;
+    color: var(--dec-alert-desc) !important;
 }
 
 .decision-filtered {
-    background: #f0fdf4;
-    border: 1.5px solid #22c55e;
+    background: var(--dec-filt-bg) !important;
+    border: 1.5px solid var(--dec-filt-border) !important;
     border-radius: 8px;
     padding: 16px;
     text-align: center;
     margin-bottom: 14px;
 }
 
+.decision-filtered .decision-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--dec-filt-title) !important;
+    margin: 4px 0;
+}
+
+.decision-filtered .decision-desc {
+    font-size: 0.82rem;
+    color: var(--dec-filt-desc) !important;
+}
+
 .human-action-box {
-    background: #f8fafc;
-    border: 1px solid #cbd5e1;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
     border-radius: 8px;
     padding: 14px;
     margin-top: 14px;
@@ -185,7 +366,7 @@ def render_kpi_header():
             <div class="kpi-desc">995 / 2,000 cases filtered before human review</div>
         </div>
         <div class="kpi-card">
-            <div class="kpi-title">Precision</div>
+            <div class="kpi-title">Benchmark Precision</div>
             <div class="kpi-value" style="color: #ea580c;">72.24%*</div>
             <div class="kpi-desc">Proportion of confirmed alerts that are genuine</div>
         </div>
@@ -218,13 +399,11 @@ def render_decision_card(res):
         badge_icon = "⚠️"
         badge_title = "ALERT CONFIRMED"
         badge_desc = "Both verification conditions are satisfied. Escalated to primary operator triage queue."
-        badge_color = "#b91c1c"
     else:
         card_class = "decision-filtered"
         badge_icon = "✅"
         badge_title = "NOT CONFIRMED (FILTERED)"
         badge_desc = "The alert does not pass the verification gate and is filtered from the primary human triage queue."
-        badge_color = "#15803d"
 
     pill_v1 = f'<span class="gate-pill {"gate-pass" if v1_pass else "gate-fail"}">{"PASS" if v1_pass else "FAIL"}</span>'
     pill_v2 = f'<span class="gate-pill {"gate-pass" if v2_pass else "gate-fail"}">{"PASS" if v2_pass else "FAIL"}</span>'
@@ -232,7 +411,7 @@ def render_decision_card(res):
     warning_html = ""
     if res_warn:
         warning_html = f"""
-        <div style="background: #fffbeb; border: 1px solid #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 4px; font-size: 0.76rem; color: #92400e; margin-top: 10px;">
+        <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 4px; font-size: 0.76rem; color: #d97706; margin-top: 10px;">
             <strong>Notice:</strong> Crop size is small ({dim}). 10% context padding was applied to protect CLIP feature resolution.
         </div>
         """
@@ -240,42 +419,42 @@ def render_decision_card(res):
     return f"""
     <div class="{card_class}">
         <div style="font-size: 1.8rem; line-height: 1;">{badge_icon}</div>
-        <div style="font-size: 1.25rem; font-weight: 700; color: {badge_color}; margin: 4px 0;">{badge_title}</div>
-        <div style="font-size: 0.82rem; color: #334155;">{badge_desc}</div>
+        <div class="decision-title">{badge_title}</div>
+        <div class="decision-desc">{badge_desc}</div>
     </div>
 
     <div class="score-card">
-        <div style="font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
-            VERIFICATION EVIDENCE & GATE STATUS
+        <div class="score-header">
+            VERIFICATION EVIDENCE &amp; GATE STATUS
         </div>
         
         <div class="score-row">
             <div>
-                <span style="font-weight: 600; font-size: 0.82rem; color: #1e293b;">Stage 1: OWL-ViT Confidence (V1)</span>
-                <div style="font-size: 0.74rem; color: #64748b;">Cutoff: &ge; {V1_THRESHOLD:.2f}</div>
+                <span class="score-label">Stage 1: OWL-ViT Confidence (V1)</span>
+                <div class="score-sub">Cutoff: &ge; {V1_THRESHOLD:.2f}</div>
             </div>
             <div style="text-align: right;">
-                <span style="font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 700; color: #0f172a;">{v1_score:.4f}</span>
+                <span class="score-val">{v1_score:.4f}</span>
                 <span style="margin-left: 6px;">{pill_v1}</span>
             </div>
         </div>
 
         <div class="score-row">
             <div>
-                <span style="font-weight: 600; font-size: 0.82rem; color: #1e293b;">Stage 2: CLIP Semantic Similarity (V2)</span>
-                <div style="font-size: 0.74rem; color: #64748b;">Cutoff: &ge; {V2_THRESHOLD:.2f}</div>
+                <span class="score-label">Stage 2: CLIP Semantic Similarity (V2)</span>
+                <div class="score-sub">Cutoff: &ge; {V2_THRESHOLD:.2f}</div>
             </div>
             <div style="text-align: right;">
-                <span style="font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 700; color: #0f172a;">{v2_score:.4f}</span>
+                <span class="score-val">{v2_score:.4f}</span>
                 <span style="margin-left: 6px;">{pill_v2}</span>
             </div>
         </div>
 
-        <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 0.76rem; color: #475569; display: flex; justify-content: space-between;">
+        <div class="score-footer">
             <span><strong>Rule:</strong> AND Logic (V1 &ge; {V1_THRESHOLD:.2f} &amp; V2 &ge; {V2_THRESHOLD:.2f})</span>
             <span><strong>ROI:</strong> {dim}</span>
         </div>
-        <div style="font-size: 0.74rem; color: #64748b; margin-top: 4px; display: flex; justify-content: space-between;">
+        <div class="score-meta">
             <span>V1 Latency: {lat_v1:.1f}ms</span>
             <span>V2 Latency: {lat_v2:.1f}ms</span>
         </div>
