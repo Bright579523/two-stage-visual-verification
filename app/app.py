@@ -630,11 +630,14 @@ def create_app_tab(
 # ---------------------------------------------------------------------------
 def build_app():
     """Assembles the executive Two-Stage Verification Gradio dashboard."""
-    with gr.Blocks(title="Two-Stage Visual Verification Platform") as demo:
+    with gr.Blocks(title="Zero-Shot VLM Hallucination Diagnostics") as demo:
         gr.Markdown(
             """
-            # 🛡️ Two-Stage Visual Verification Platform
-            ### Operational Decision Support for False Alarm Reduction in Industrial Computer Vision
+            # 🔬 Zero-Shot VLM Hallucination & Verification Diagnostics
+            ### Research Investigation: Reliability Limits of OWL-ViT + CLIP in Industrial Visual Monitoring
+
+            > ⚠️ **Research Demonstration — Not Production Ready:**
+            > This dashboard is a **diagnostic research tool** evaluating the reliability limits of zero-shot vision-language models. In real-world industrial tests, zero-shot models **are not accurate enough for autonomous safety monitoring**: CLIP struggles with prompt negation (often flagging compliant workers as violations), and OWL-ViT misses small or distant targets. Use this interface to analyze where and why detections fail.
             """
         )
 
@@ -669,7 +672,7 @@ def build_app():
             """
             ---
             <div style="font-size: 0.78rem; color: #94a3b8; text-align: center;">
-                Two-Stage Visual Verification Engine | OWL-ViT Candidate Detection + CLIP Visual-Semantic Verification | Frozen Operating Point: AND Gate (V1 &ge; 0.05, V2 &ge; 0.20)
+                Zero-Shot VLM Diagnostic Engine | OWL-ViT Candidate Detection + CLIP Visual-Semantic Verification | Research Operating Point: AND Gate (V1 &ge; 0.05, V2 &ge; 0.20)
             </div>
             """
         )

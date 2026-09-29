@@ -1,27 +1,32 @@
-# LinkedIn Post — Two-Stage Visual Verification
+# LinkedIn Post — Hallucination Detection in Zero-Shot Vision Models
 
 ```text
-After 10+ years in manufacturing, I kept seeing the same problem: automated detection systems flood operators with false alarms until they stop paying attention.
+After 10+ years in manufacturing, I kept seeing the same problem: AI detection systems generate so many false alarms that operators stop trusting them.
 
-During my studies, I worked on AI hallucination detection — basically asking "did the model actually see what it claims to see?" Turns out that's the exact same problem factory floors deal with every day.
+During my studies, I decided to investigate why. Specifically — can zero-shot vision-language models (OWL-ViT, CLIP) reliably detect safety violations without any fine-tuning?
 
-So I built a system around it:
+I built a two-stage verification pipeline to test this:
 
-OWL-ViT scans the image for target objects first (Stage 1).
-CLIP double-checks the cropped region against the original query (Stage 2).
-Alerts only reach human reviewers when both stages agree.
+→ Stage 1: OWL-ViT scans for target objects using text prompts
+→ Stage 2: CLIP re-evaluates each cropped detection region
+→ Both stages must agree before an alert fires
 
-Tested on 2,000 held-out samples:
-• Cut false alarms by 76.75%
-• Kept 90.75% recall — no trading away safety
-• Nearly half the review queue filtered out before anyone has to look
+Then I stress-tested it on real factory scenarios — PPE checks, forklifts, cranes, surface defects.
 
-I also ran it through 10 real factory scenarios — forklifts, cranes, PPE checks, defective parts. Found clear limits: small distant objects get missed, metal reflections confuse the model, and if Stage 1 drops a candidate, Stage 2 can't save it.
+What I found:
 
-Knowing where your system breaks matters as much as knowing where it works.
+• The system still generates false positives — CLIP can't reliably understand "without helmet" because it struggles with negation
+• Small or distant objects get missed entirely — if Stage 1 doesn't detect it, Stage 2 can't fix it
+• Adjusting thresholds to reduce false alarms increases missed detections, and vice versa
 
-Try it: https://huggingface.co/spaces/Bright87/Two_Stage_Visual_Verification
+The honest conclusion: zero-shot VLMs are not ready for autonomous safety alerting. They hallucinate too often in safety-critical contexts.
+
+But that finding itself has value. Understanding where AI breaks is just as important as showcasing where it works. I built a dashboard that visualizes exactly how and why each detection fails — making the hallucination problem visible and measurable.
+
+For production use, you'd need fine-tuned models (YOLO + domain-specific classifier), not zero-shot inference.
+
+Try the demo: https://huggingface.co/spaces/Bright87/Two_Stage_Visual_Verification
 Code: https://github.com/Bright579523/two-stage-visual-verification
 
-#ComputerVision #DataScience #Manufacturing #IndustrialAI #Python #HuggingFace
+#ComputerVision #DataScience #Manufacturing #AIResearch #HallucinationDetection #Python
 ```

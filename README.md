@@ -1,5 +1,5 @@
-# From AI Hallucination to Factory Floor
-### Two-Stage Visual Verification for Open-Vocabulary Industrial Computer Vision
+# Hallucination Detection in Zero-Shot Vision-Language Models
+### A Research Investigation into OWL-ViT + CLIP Reliability for Industrial Safety Monitoring
 
 [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces%20Live%20Demo-blue)](https://huggingface.co/spaces/Bright87/Two_Stage_Visual_Verification)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
@@ -7,36 +7,31 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 
-> **Try it now:** [Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/Bright87/Two_Stage_Visual_Verification) · [Direct Web App](https://bright87-two-stage-visual-verification.hf.space)
+> **Try the demo:** [Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/Bright87/Two_Stage_Visual_Verification) · [Direct Web App](https://bright87-two-stage-visual-verification.hf.space)
 
 ![Dashboard Preview](assets/dashboard_preview.png)
 
 ---
 
-## What This Does
+## Research Question
 
-Open-vocabulary detectors like OWL-ViT can find arbitrary objects from natural language queries — but when used for automated monitoring, they generate **60% false positives at sensitive thresholds**. Human operators experience alert fatigue, review queues back up, and teams either raise the threshold (missing real hazards) or stop trusting the system altogether.
+Can zero-shot vision-language models (OWL-ViT, CLIP) — without any fine-tuning — reliably detect safety violations in industrial environments?
 
-This pipeline adds a **second verification step** before escalating alerts to human reviewers:
+**Short answer: No.** The system generates both false positives (alerting when workers are compliant) and false negatives (missing genuine violations). These limitations make zero-shot VLMs unsuitable for autonomous safety alerting in their current form.
 
-1. **Stage 1 (OWL-ViT)** proposes candidate regions at high sensitivity
-2. **Stage 2 (CLIP)** verifies whether the cropped region actually matches the query
-3. **AND Gate** — alerts reach human review only when both stages agree
-
-### Results on 2,000-Sample Frozen Test Set
-
-| | Raw Baseline (Stage 1 Alone) | **Two-Stage Pipeline** |
-|:---|:---:|:---:|
-| **Recall** | 100.0% | **90.75%** |
-| **Precision** | 40.0% | **72.24%** |
-| **False Alarm Reduction** | — | **76.75%** |
-| **Cases Filtered Before Human Review** | 0 / 2,000 | **995 / 2,000 (49.8%)** |
-
-> Thresholds ($V_1 \ge 0.05$, $V_2 \ge 0.20$) were selected on a separate 3,000-sample Dev set under a strict constraint: **Recall must stay ≥ 90%**. The test set was never used for tuning.
+This project investigates *why* these failures occur and builds a diagnostic dashboard to make the hallucination problem visible and measurable.
 
 ---
 
-## How It Works
+## What This Project Does
+
+This is a **research pipeline** that stress-tests zero-shot vision-language models on industrial detection tasks. It is **not** a production-ready safety system.
+
+The pipeline uses a two-stage verification architecture:
+
+1. **Stage 1 (OWL-ViT)** — proposes candidate regions from text prompts at high sensitivity
+2. **Stage 2 (CLIP)** — re-evaluates cropped regions to check semantic match
+3. **AND Gate** — alerts fire only when both stages agree
 
 ```
 Input Image + Query Prompt
@@ -58,25 +53,36 @@ Input Image + Query Prompt
 [Alert Confirmed — Escalated to Human Triage Queue]
 ```
 
-**Why the 10% context margin?** When cropping around the detected object, adding a 10% border keeps surrounding spatial context visible to CLIP — preventing edge clipping from distorting the verification result.
-
 ---
 
-## Where It Breaks — Failure Modes
+## Key Findings
 
-The system was stress-tested across 10 photorealistic industrial scenarios (PPE monitoring, forklift operations, crane surveillance, machined parts, scrap detection). Three operational limitations were identified:
+### ⚠️ The System Is Not Production-Ready
 
-### 1. Small & Distant Objects
-A distant factory worker occupying only 22×43 pixels scored $V_1 = 0.031$, falling below the Stage 1 threshold. Very small or distant targets reduce detection confidence to the point of missed alerts.
+Benchmark numbers on a frozen test set show statistical improvement:
 
-### 2. Sequential Gate Bottleneck
-When Stage 1 misses a candidate ($V_1 < 0.05$), Stage 2 never gets a chance to verify it — even if the semantic match would have passed. This is a structural property of the sequential architecture: Stage 2 cannot rescue what Stage 1 drops.
+| | Raw Baseline (Stage 1 Alone) | **Two-Stage Pipeline** |
+|:---|:---:|:---:|
+| **Recall** | 100.0% | **90.75%** |
+| **Precision** | 40.0% | **72.24%** |
+| **False Alarm Reduction** | — | **76.75%** |
 
-### 3. Visual Clutter & Specular Highlights
-Dense machining trays with polished steel cylinders create complex reflection patterns that suppress open-vocabulary embedding confidence below operating thresholds.
+**However**, real-world stress testing revealed critical failures that these aggregate numbers hide:
 
-### 4. Prompt Sensitivity
-Canonical phrasing (`"a photo of a worker without a hardhat"`) scored $V_1 = 0.117$ (PASS), while colloquial phrasing (`"person not wearing helmet"`) dropped to $V_1 = 0.019$ (FAIL). Production deployments should enforce consistent prompt templates.
+### 1. False Positives — CLIP Cannot Understand Negation
+CLIP struggles with prompts like `"a worker without a hardhat"`. It matches visual similarity to "worker" and "hardhat" independently, so a worker **wearing** a hardhat can still trigger an alert. The model does not understand the semantic relationship "without."
+
+### 2. False Negatives — Small/Distant Objects Are Invisible
+A worker occupying only 22×43 pixels scored $V_1 = 0.031$, falling below the Stage 1 threshold. If Stage 1 misses a candidate, Stage 2 never gets a chance to verify it. This is a structural limitation of the sequential architecture.
+
+### 3. Precision-Recall Trade-off Has No Good Solution
+Tightening thresholds to reduce false alarms increases missed detections. Loosening thresholds catches more violations but floods the queue with false positives. There is no threshold configuration that solves both problems simultaneously with zero-shot models.
+
+### 4. Visual Clutter & Specular Highlights
+Dense machining trays with polished steel create reflection patterns that suppress embedding confidence below operating thresholds.
+
+### 5. Prompt Sensitivity
+Canonical phrasing (`"a photo of a worker without a hardhat"`) scored $V_1 = 0.117$ (PASS), while colloquial phrasing (`"person not wearing helmet"`) dropped to $V_1 = 0.019$ (FAIL).
 
 <details>
 <summary><strong>📊 Full Stress Test Results (10 Scenarios)</strong></summary>
@@ -98,20 +104,36 @@ Canonical phrasing (`"a photo of a worker without a hardhat"`) scored $V_1 = 0.1
 
 ---
 
-## Interactive Dashboard
+## What Would Be Needed for Production
 
-The Gradio dashboard demonstrates verification logic across two industrial contexts with a shared engine:
+This research identifies a clear path for anyone who wants to build a production-grade system:
+
+| Component | Zero-Shot (This Project) | Production-Ready |
+|:---|:---|:---|
+| **Object Detector** | OWL-ViT (zero-shot) | YOLOv8/v11 fine-tuned on domain data |
+| **Classifier** | CLIP (zero-shot) | Domain-specific binary classifier |
+| **Negation Handling** | ❌ Not supported | ✅ Handled by trained classifier |
+| **Small Object Detection** | ❌ Misses <50px targets | ✅ Tiling or high-res inference |
+| **Tracking** | ❌ None | ✅ DeepSORT / ByteTrack |
+| **Alert Logic** | Single-frame threshold | Temporal voting over N frames |
+| **Expected Accuracy** | ~72% precision | 95%+ precision |
+
+---
+
+## Hallucination Detection Dashboard
+
+The Gradio dashboard is built as a **diagnostic tool** to visualize how and why detections succeed or fail:
 
 1. **PPE Monitoring** — hardhats, safety footwear, personnel near crane loads
 2. **Assembly Inspection** — missing fasteners, metal shavings, surface burrs
 
-*(These are demonstration workflows, not validated for production safety or quality-control decisions.)*
-
 ### Dashboard Features
-* **Benchmark KPI Header** — validated metrics displayed at a glance
+* **Benchmark KPI Header** — validated metrics at a glance
 * **Side-by-Side Visualizer** — full image with bounding box alongside the 10% context-padded crop
 * **Verification Evidence Card** — V1 and V2 scores with PASS/FAIL indicators
 * **Simulated Human Triage** — interactive disposition buttons (Acknowledge / Dismiss / Flag)
+
+*(These are demonstration workflows for research purposes, not validated for production safety decisions.)*
 
 <details>
 <summary><strong>📊 Full Benchmark Comparison (All Strategies)</strong></summary>
